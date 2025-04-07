@@ -199,6 +199,21 @@ function solids4Foam::convertCaseFormat()
         sed -i  "s@postProcessing/surfaces/@postProcessing/sample.surfaces/@g" plot.gnuplot
     fi
 
+    # 13. Replace mirrorMeshDict differences
+    if [[ -f "${CASE_DIR}"/system/mirrorMeshDict ]]
+    then
+        echo "OpenFOAM specific: replacing 'basePoint' and 'normalVector' in "
+        echo "system/mirrorMeshDict with with 'point' and 'normal'"
+        sed -i -E 's/\bbasePoint\b/point/' system/mirrorMeshDict
+        sed -i -E 's/\bnormalVector\b/normal/' system/mirrorMeshDict
+    elif [[ -f "${CASE_DIR}"/system/solid/mirrorMeshDict ]]
+    then
+        echo "OpenFOAM specific: replacing 'basePoint' and 'normalVector' in "
+        echo "system/solid/mirrorMeshDict with with 'point' and 'normal'"
+        sed -i -E 's/\bbasePoint\b/point/' system/solid/mirrorMeshDict
+        sed -i -E 's/\bnormalVector\b/normal/' system/solid/mirrorMeshDict
+    fi
+
     echo
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "| solids4Foam::convertCaseFormat end                                  |"
@@ -383,6 +398,21 @@ function solids4Foam::convertCaseFormatFoamExtend()
     then
         echo "Updating plot.gnuplot"
         sed -i "s|postProcessing/sample.surfaces/|postProcessing/surfaces/|g" plot.gnuplot
+    fi
+
+    # 13. Replace mirrorMeshDict differences
+    if [[ -f "${CASE_DIR}"/system/mirrorMeshDict ]]
+    then
+        echo "OpenFOAM specific: replacing 'point' and 'normal' in "
+        echo "system/mirrorMeshDict with with 'basePoint' and 'normalVector'"
+        sed -i -E 's/\bpoint\b/basePoint/' system/mirrorMeshDict
+        sed -i -E 's/\b(normal)\b/\1Vector/' system/mirrorMeshDict
+    elif [[ -f "${CASE_DIR}"/system/solid/mirrorMeshDict ]]
+    then
+        echo "OpenFOAM specific: replacing 'point' and 'normal' in "
+        echo "system/mirrorMeshDict with with 'basePoint' and 'normalVector'"
+        sed -i -E 's/\bpoint\b/basePoint/' system/solid/mirrorMeshDict
+        sed -i -E 's/\b(normal)\b/\1Vector/' system/solid/mirrorMeshDict
     fi
 
     echo
